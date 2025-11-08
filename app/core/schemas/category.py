@@ -43,3 +43,16 @@ class Category(BaseModel):
                                      )
     is_active: bool = Field(description="Indicates whether the category is active and visible to users.")
     model_config = ConfigDict(from_attributes=True)
+
+
+class CategoryList(BaseModel):
+    """
+    Schema for returning a paginated list of categories.
+    Used in GET requests that return multiple categories, typically with pagination.
+    Contains metadata such as the total number of records and the current page.
+    """
+
+    total: int = Field(description='Total number of categories available in the database.')
+    page: int = Field(description='The current page number (starting from 1).')
+    limit: int = Field(description='The maximum number of categories returned per page.')
+    items: list[Category] = Field(description='A list of category objects for the current page.')

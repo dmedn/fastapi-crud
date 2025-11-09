@@ -93,3 +93,31 @@ class ProductUpdate(BaseModel):
         None,
         description="Indicates whether the product remains active (optional)."
     )
+
+
+
+class ProductList(BaseModel):
+    """
+    Schema for returning a paginated list of products.
+    Used in GET requests that return multiple products, typically with pagination.
+    Includes metadata such as the total number of available records,
+    the current page number, and the maximum number of items per page.
+    """
+
+    total: int = Field(
+        ge=0,
+        description="Total number of products available in the database."
+    )
+    items: list[Product] = Field(
+        description="A list of product objects for the current page."
+    )
+    page: int = Field(
+        ge=1,
+        description="The current page number (starting from 1)."
+    )
+    limit: int = Field(
+        ge=1,
+        description="The maximum number of products returned per page."
+    )
+
+    model_config = ConfigDict(from_attributes=True)

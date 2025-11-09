@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, EmailStr, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 
 
@@ -22,11 +22,12 @@ class CategoryUpdate(BaseModel):
     Used in PATCH or PUT requests when modifying a category.
     All fields are optional — you can update one or several attributes.
     """
-    id: Optional[int] = Field(None, min_length=3, max_length=50,
-                              description="The new name of the category. Must be between 3 and 50 characters long.")
+
+    name: Optional[str] = Field(min_length=3, max_length=50,
+                      description="The new name of the category. Must be between 3 adn 50 characters long.")
     parent_id: Optional[int] = Field(None,
                                      description='The new parent category ID, if this category should become a subcategory. If set to null, the category will become a top-level category')
-
+    is_active: Optional[bool] = Field(None, description='Defines whether the category is active or not.')
 
 class Category(BaseModel):
     """

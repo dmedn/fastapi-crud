@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from .product import Product
     from .review import Review
     from .order import Order
-
+    from .cart import CartItem
 
 class User(Base, IntIdPkMixin):
     """
@@ -46,3 +46,4 @@ class User(Base, IntIdPkMixin):
     products: Mapped[list["Product"]] = relationship('Product', back_populates='seller')
     reviews: Mapped[list["Review"]] = relationship("Review", back_populates='user', )
     orders: Mapped[list["Order"]] = relationship("Order", back_populates='user', cascade="all, delete-orphan")
+    cart_items: Mapped[list["CartItem"]] = relationship("CartItem", back_populates='user', cascade="all, delete-orphan")

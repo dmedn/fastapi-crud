@@ -23,6 +23,13 @@ from app.core.schemas.order import (
     OrderItem,
     OrderList,
 )
+from app.core.schemas.cart import (
+    CartItem,
+    Cart,
+    CartItemCreate,
+    CartItemUpdate,
+    CartItemBase,
+)
 
 __all__ = [
     # Category schemas
@@ -41,8 +48,14 @@ __all__ = [
     # User schemas
     "User",
     "UserCreate",
-    #Order schemas
+    # Order schemas
     "Order",
     "OrderList",
-    "OrderItem"
+    "OrderItem",
+    # Cart schemas
+    "Cart",
+    "CartItemBase",
+    "CartItem",
+    "CartItemCreate",
+    "CartItemUpdate"
 ]

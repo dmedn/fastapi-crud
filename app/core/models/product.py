@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from .category import Category
     from .review import Review
     from .order import OrderItem
+    from .cart import CartItem
 
 
 class Product(Base, IntIdPkMixin):
@@ -68,6 +69,7 @@ class Product(Base, IntIdPkMixin):
         ),
         nullable=False
     )
+    cart_items: Mapped[list["CartItem"]] = relationship("CartItem", back_populates='product', cascade="all, delete-orphan")
 
     __table_args__ = (
         Index('ix_products_tsv_gin', "tsv", postgresql_using='gin'),

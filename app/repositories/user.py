@@ -1,8 +1,8 @@
 from typing import Optional, Sequence
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.models import User
+from app.core.models import User, CartItem
 from app.repositories.base_repo import BaseRepository
 from app.core.security import verify_password
 
@@ -100,3 +100,28 @@ class UserRepository(BaseRepository[User]):
         )
         await session.commit()
         return result.scalars().first()
+
+    async def get_cart_items(self, session: AsyncSession, user_id: int) -> Sequence[CartItem]:
+        """
+        Retrieve all items in a user's shopping cart.
+
+        Args:
+            session (AsyncSession): SQLAlchemy asynchronous session.
+            user_id (int): ID of the user.
+
+        Returns:
+            Sequence[CartItem]: A list of CartItem objects belonging to the user.
+        """
+        result = await session.execute(select(CartItem).where(CartItem.user_id == user_id))
+        return result.scalars().all()
+
+    async def clear_cart(self, session: AsyncSession, user_id: int) -> None:
+        """
+        Remove all items from a user's shopping cart.
+
+        Args:
+            session (AsyncSession): SQLAlchemy asynchronous session.
+            user_id (int): ID of the user whose cart should be cleared.
+        """
+        await session.execute(delete(CartItem).where(CartItem.user_id == user_id))
+        await session.commit()

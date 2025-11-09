@@ -2,7 +2,7 @@ from typing import Sequence, Optional
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.models import Product
+from app.core.models import Product, CartItem
 from app.repositories.base_repo import BaseRepository
 
 
@@ -115,7 +115,6 @@ class ProductRepository(BaseRepository[Product]):
         """
         Retrieve products filtered by various parameters such as category,
         price range, and search query. Supports pagination and optional sorting.
-
         Args:
             session (AsyncSession): SQLAlchemy asynchronous session.
             query (Optional[str]): Full-text search query.
@@ -125,7 +124,6 @@ class ProductRepository(BaseRepository[Product]):
             sort_by (Optional[str]): Sorting parameter ("price_asc", "price_desc", "rating").
             limit (int): Maximum number of records to return.
             offset (int): Number of records to skip (for pagination).
-
         Returns:
             Sequence[Product]: Filtered list of products.
         """
@@ -141,7 +139,6 @@ class ProductRepository(BaseRepository[Product]):
             ts_query = func.plainto_tsquery("english", query)
             stmt = stmt.where(self.model.tsv.op("@@")(ts_query))
 
-        # Sorting
         if sort_by == "price_asc":
             stmt = stmt.order_by(self.model.price.asc())
         elif sort_by == "price_desc":
@@ -165,14 +162,12 @@ class ProductRepository(BaseRepository[Product]):
         """
         Count the total number of products matching the given filters.
         Useful for pagination metadata.
-
         Args:
             session (AsyncSession): SQLAlchemy asynchronous session.
             query (Optional[str]): Text query for full-text search.
             min_price (Optional[float]): Minimum product price.
             max_price (Optional[float]): Maximum product price.
             category_id (Optional[int]): Filter by category ID.
-
         Returns:
             int: Total count of filtered products.
         """
@@ -190,3 +185,17 @@ class ProductRepository(BaseRepository[Product]):
 
         result = await session.execute(stmt)
         return result.scalar_one()
+
+    async def get_carts_with_product(self, session: AsyncSession, product_id: int) -> Sequence[CartItem]:
+        """
+        Retrieve all cart entries that contain a specific product.
+        Args:
+            session (AsyncSession): SQLAlchemy asynchronous session.
+            product_id (int): ID of the product to search for in carts.
+        Returns:
+            Sequence[CartItem]: A list of CartItem objects that reference the given product.
+        """
+        result = await session.execute(
+            select(CartItem).where(CartItem.product_id == product_id)
+        )
+        return result.scalars().all()

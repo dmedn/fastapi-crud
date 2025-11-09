@@ -32,7 +32,7 @@ class Review(Base, IntIdPkMixin, CreatedAtMixin):
             - Each (user_id, product_id) pair must be unique (one review per user per product).
             - Inherits CreatedAtMixin to automatically set creation timestamps.
         """
-    __table_args__ = (UniqueConstraint("user_id", "product_id", name="uq_user_product_review"))
+    __table_args__ = (UniqueConstraint("user_id", "product_id", name="uq_user_product_review"),)
 
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     product_id: Mapped[int] = mapped_column(ForeignKey('products.id'), nullable=False)

@@ -70,5 +70,5 @@ class Product(Base, IntIdPkMixin):
     )
 
     __table_args__ = (
-        Index('ix_products_tsv_gin', "tsv", postgresql_using='gin')
+        Index('ix_products_tsv_gin', "tsv", postgresql_using='gin'),
     )

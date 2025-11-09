@@ -27,6 +27,11 @@ class BaseRepository(Generic[ModelType]):
         """Get a record by its ID."""
         return await session.get(self.model, obj_id)
 
+    async def filter_by(self, session:AsyncSession, **filters) -> Sequence[ModelType]:
+        """Return a list of records matching given filters."""
+        result = await session.execute(select(self.model).filter_by(**filters))
+        return result.scalars().all()
+
     async def create(self, session: AsyncSession, **kwargs) -> ModelType:
         """Create a new record."""
         obj = self.model(**kwargs)

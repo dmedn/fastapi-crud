@@ -17,6 +17,11 @@ class DatabaseConfig(BaseModel):
     echo: bool = False
     echo_pool: bool = False
 
+class SecurityConfig(BaseModel):
+    secret_key: str
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
+    refresh_token_expire_days: int = 7
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -29,6 +34,7 @@ class Settings(BaseSettings):
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
     db: DatabaseConfig
+    security: SecurityConfig
 
 
 settings = Settings()

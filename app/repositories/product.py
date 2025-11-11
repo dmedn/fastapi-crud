@@ -199,3 +199,4 @@ class ProductRepository(BaseRepository[Product]):
             select(CartItem).where(CartItem.product_id == product_id)
         )
         return result.scalars().all()
+

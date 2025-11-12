@@ -100,6 +100,7 @@ class ProductService(BaseService[Product]):
         updated_product = await self.repository.update(session, product_id, safe_data)
         return updated_product
 
+
     async def filter_products(
             self,
             session: AsyncSession,

@@ -139,3 +139,42 @@ class ReviewRepository(BaseRepository[Review]):
 
         await self.update_product_rating(session, product_id)
         return review
+
+    async def get_user_review_for_product(
+            self, session: AsyncSession, user_id: int, product_id: int
+    ) -> Optional[Review]:
+        """
+        Retrieve a review written by a specific user for a given product.
+
+        Args:
+            session (AsyncSession): SQLAlchemy async session.
+            user_id (int): ID of the user.
+            product_id (int): ID of the product.
+
+        Returns:
+            Optional[Review]: The review object if it exists, otherwise None.
+        """
+        result = await session.execute(
+            select(self.model)
+            .where(self.model.user_id == user_id)
+            .where(self.model.product_id == product_id)
+        )
+        return result.scalars().first()
+
+    async def get_reviews_for_product(
+            self, session: AsyncSession, product_id: int
+    ) -> Sequence[Review]:
+        """
+        Retrieve all reviews for a specific product.
+
+        Args:
+            session (AsyncSession): SQLAlchemy async session.
+            product_id (int): ID of the product.
+
+        Returns:
+            Sequence[Review]: List of review objects.
+        """
+        result = await session.execute(
+            select(self.model).where(self.model.product_id == product_id)
+        )
+        return result.scalars().all()

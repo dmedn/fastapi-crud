@@ -1,38 +1,31 @@
-from pydantic import BaseModel, Field, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, Field
 
 
-class UserCreate(BaseModel):
-    """
-    Schema for creating a new user account.
-
-    Used for registration or account creation requests.
-    Includes basic credentials and an optional role specification.
-    """
-
-    email: EmailStr = Field(
-        description="The user's unique email address. Must be a valid email format."
-    )
-    password: str = Field(
-        min_length=8,
-        description="The user's password. Must contain at least 8 characters."
-    )
-    role: str = Field(
-        default="buyer",
-        pattern="^(buyer|seller|admin)$",
-        description="The role of the user. Must be one of: 'buyer', 'seller', or 'admin'."
-    )
+class UserBase(BaseModel):
+    email: EmailStr
+    full_name: str | None = None
+    role: str = "customer"
 
 
-class User(BaseModel):
-    """
-    Represents a user entity used in API responses.
+class UserCreate(UserBase):
+    password: str = Field(..., min_length=6)
 
-    Returned when retrieving user information from the database.
-    """
 
-    id: int = Field(description="Unique identifier of the user.")
-    email: EmailStr = Field(description="Email address of the user.")
-    is_active: bool = Field(description="Indicates whether the user account is active.")
-    role: str = Field(description="The user's assigned role: 'buyer', 'seller', or 'admin'.")
+class UserUpdate(BaseModel):
+    full_name: str | None = None
+    password: str | None = Field(None, min_length=6)
 
-    model_config = ConfigDict(from_attributes=True)
+
+class UserRead(UserBase):
+    id: int
+    is_active: bool
+
+    class Config:
+        from_attributes = True
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str
+

@@ -125,3 +125,16 @@ class UserRepository(BaseRepository[User]):
         """
         await session.execute(delete(CartItem).where(CartItem.user_id == user_id))
         await session.commit()
+
+    async def get_active_users(self, session: AsyncSession) -> Sequence[User]:
+        """
+        Retrieve all active users.
+        Args:
+            session (AsyncSession): SQLAlchemy async session.
+        Returns:
+            Sequence[User]: A list of users whose 'is_active' flag is True.
+        """
+        result = await session.execute(
+            select(self.model).where(self.model.is_active.is_(True))
+        )
+        return result.scalars().all()

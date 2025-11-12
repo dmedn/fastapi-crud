@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 
@@ -51,6 +51,23 @@ async def update_product(
         seller_id=current_user.id,
         data=product_data.model_dump(exclude_unset=True),
     )
+
+
+@router.get(
+    "/{product_id}",
+    response_model=Product,
+    summary="Get product by ID",
+    description="Retrieve detailed information about a product by its ID.",
+)
+async def get_product_by_id(
+        product_id: int,
+        session: AsyncSession = Depends(db_helper.get_async_db),
+):
+    """Endpoint to retrieve a product by its ID."""
+    product = await product_service.get_by_id(session, product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return product
 
 
 @router.get(
@@ -118,3 +135,26 @@ async def get_users_with_product_in_cart(
     """Endpoint to get users who have added this product to their cart."""
     users = await product_service.get_users_with_product_in_cart(session, product_id)
     return [user.id for user in users]
+
+
+@router.delete(
+    "/{product_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete a product",
+    description="Delete a product. Only the owner seller or admin can perform this action.",
+)
+async def delete_product(
+        product_id: int,
+        session: AsyncSession = Depends(db_helper.get_async_db),
+        current_user: User = Depends(get_current_seller),
+):
+    """Endpoint to delete a product by ID."""
+    product = await product_service.get_by_id(session, product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    if product.seller_id != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="You are not allowed to delete this product")
+
+    await product_service.delete(session, product_id)
+    return None

@@ -15,8 +15,11 @@ from app.core.schemas.review import (
     ReviewCreate,
 )
 from app.core.schemas.user import (
-    User,
+    UserBase,
     UserCreate,
+    UserUpdate,
+    UserRead,
+    TokenResponse,
 )
 from app.core.schemas.order import (
     Order,
@@ -46,8 +49,11 @@ __all__ = [
     "ReviewSchema",
     "ReviewCreate",
     # User schemas
-    "User",
+    "UserBase",
     "UserCreate",
+    "UserRead",
+    "UserUpdate",
+    "TokenResponse",
     # Order schemas
     "Order",
     "OrderList",

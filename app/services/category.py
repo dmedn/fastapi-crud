@@ -102,14 +102,11 @@ class CategoryService(BaseService[Category]):
     async def activate_category(self, session: AsyncSession, category_id: int) -> Category:
         """
         Activate a category (and optionally its parent chain if needed).
-
         Args:
             session (AsyncSession): SQLAlchemy async session.
             category_id (int): ID of the category to activate.
-
         Returns:
             Category: Updated active category.
-
         Raises:
             HTTPException: If category not found.
         """

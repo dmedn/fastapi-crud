@@ -11,7 +11,6 @@ from app.services.base_service import BaseService
 class ReviewService(BaseService[Review]):
     """
     Service layer for managing product reviews.
-
     Provides business logic for creating, updating, deleting, and
     recalculating product ratings based on user reviews.
     """
@@ -154,11 +153,9 @@ class ReviewService(BaseService[Review]):
     async def _recalculate_product_rating(self, session: AsyncSession, product_id: int) -> None:
         """
         Recalculate and update the average rating for a given product.
-
         Args:
             session (AsyncSession): SQLAlchemy async session.
             product_id (int): ID of the product whose rating needs recalculation.
-
         Raises:
             HTTPException: If the product does not exist.
         """
@@ -169,7 +166,7 @@ class ReviewService(BaseService[Review]):
                 detail="Product not found while recalculating rating.",
             )
 
-        # Calculate average grade
+
         result = await session.execute(
             select(func.avg(Review.grade)).where(Review.product_id == product_id)
         )

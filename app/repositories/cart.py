@@ -135,3 +135,20 @@ class CartRepository(BaseRepository[CartItem]):
         )
         return result.scalars().all()
 
+    async def get_item(self, session: AsyncSession, user_id: int, product_id: int) -> Optional[CartItem]:
+        """
+        Retrieve a single cart item for a specific user and product.
+        Args:
+            session (AsyncSession): Database session.
+            user_id (int): ID of the user.
+            product_id (int): ID of the product.
+        Returns:
+            Optional[CartItem]: Found cart item or None.
+        """
+        result = await session.execute(
+            select(self.model).where(
+                self.model.user_id == user_id,
+                self.model.product_id == product_id,
+            )
+        )
+        return result.scalars().first()
